@@ -1,0 +1,2493 @@
+Terminals unused in grammar
+
+   FOR
+
+
+Rules useless in parser due to conflicts
+
+  100 Factor: ID
+  102       | I_CONST
+  103       | '-' I_CONST
+  104       | F_CONST
+  105       | '-' F_CONST
+
+
+State 40 conflicts: 1 reduce/reduce
+State 41 conflicts: 1 reduce/reduce
+State 44 conflicts: 1 shift/reduce, 1 reduce/reduce
+State 56 conflicts: 5 reduce/reduce
+State 57 conflicts: 5 reduce/reduce
+State 60 conflicts: 4 reduce/reduce
+State 70 conflicts: 10 reduce/reduce
+State 94 conflicts: 1 shift/reduce
+State 95 conflicts: 1 reduce/reduce
+State 96 conflicts: 1 reduce/reduce
+State 113 conflicts: 1 shift/reduce
+State 114 conflicts: 5 reduce/reduce
+State 115 conflicts: 5 reduce/reduce
+State 116 conflicts: 2 shift/reduce
+State 150 conflicts: 1 reduce/reduce
+State 160 conflicts: 4 reduce/reduce
+State 184 conflicts: 4 reduce/reduce
+State 192 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: program stat
+    2        | stat
+
+    3 stat: declaration
+    4     | expression_stat
+    5     | print_func
+    6     | NEWLINE
+    7     | WHILESTMT
+    8     | if_else_cond
+    9     | error NEWLINE
+
+   10 declaration: type ID '=' initializer ';'
+   11            | type ID '=' arithmetic_expr ';'
+   12            | type ID '=' ID '(' param_call ')' ';'
+   13            | type ID '=' STRING_CONST ';'
+   14            | type ID ';'
+
+   15 $@1: %empty
+
+   16 declaration: type ID '(' param_list ')' $@1 CompoundStmt
+   17            | type ID '(' ')' CompoundStmt
+   18            | type ID '(' ')' ';'
+   19            | type ID '(' param_list ')' ';'
+
+   20 type: INT
+   21     | FLOAT
+   22     | BOOL
+   23     | STRING
+   24     | VOID
+
+   25 initializer: initializer_num
+   26            | ID
+   27            | TRUE
+   28            | FALSE
+
+   29 initializer_num: I_CONST
+   30                | '-' I_CONST
+   31                | F_CONST
+   32                | '-' F_CONST
+
+   33 param_list: param
+
+   34 param: param ',' type ID
+   35      | type ID
+
+   36 CompoundStmt: deeper_scope StmtList shallow_scope
+
+   37 deeper_scope: '{'
+
+   38 shallow_scope: '}'
+
+   39 StmtList: StmtList stat
+   40         | %empty
+
+   41 WHILESTMT: WHILE '(' condition_list ')' CompoundStmt
+
+   42 condition_list: condition_list AND_OP condition
+   43               | condition_list OR_OP condition
+   44               | '!' condition_list
+   45               | condition
+
+   46 condition: condition_type compare condition_type
+   47          | initializer
+   48          | ID '=' arithmetic_expr
+   49          | arithmetic_expr
+   50          | ID ArithmeticList
+   51          | ID '(' param_call ')'
+   52          | ID '(' ')'
+   53          | '(' condition_list ')'
+
+   54 condition_type: fact
+   55               | arithmetic_expr
+   56               | ID ArithmeticList
+
+   57 compare: '>'
+   58        | '<'
+   59        | GE_OP
+   60        | LE_OP
+   61        | NE_OP
+   62        | EQ_OP
+
+   63 expression_stat: ID ArithmeticList ';'
+   64                | RETURN Factor ';'
+   65                | RETURN ID ';'
+   66                | RETURN ID ArithmeticList ';'
+   67                | RETURN arithmetic_expr ';'
+   68                | ID '=' arithmetic_expr ';'
+
+   69 $@2: %empty
+
+   70 expression_stat: ID '(' param_call ')' $@2 ';'
+   71                | ID '(' ')' ';'
+
+   72 param_call: param_call ',' condition_list
+   73           | param_call ',' STRING_CONST
+   74           | condition_list
+   75           | STRING_CONST
+
+   76 ArithmeticList: INC
+   77               | DEC
+   78               | ADD_ASSIGN fact
+   79               | SUB_ASSIGN fact
+   80               | MUL_ASSIGN fact
+   81               | DIV_ASSIGN fact
+   82               | MOD_ASSIGN fact
+
+   83 arithmetic_expr: arithmetic_expr '+' term
+   84                | arithmetic_expr '-' term
+   85                | term
+
+   86 term: term '*' fact
+   87     | term '/' fact
+   88     | term '%' fact
+   89     | fact
+   90     | '(' arithmetic_expr ')'
+
+   91 fact: I_CONST
+   92     | '-' I_CONST
+   93     | F_CONST
+   94     | '-' F_CONST
+   95     | ID
+   96     | ID '(' param_call ')'
+   97     | ID '(' ')'
+   98     | '(' term ')'
+
+   99 Factor: TRUE
+  100       | ID
+  101       | FALSE
+  102       | I_CONST
+  103       | '-' I_CONST
+  104       | F_CONST
+  105       | '-' F_CONST
+
+  106 print_func: PRINT '(' ID ')' ';'
+  107           | PRINT '(' STRING_CONST ')' ';'
+
+  108 if_else_cond: IF '(' condition_list ')' CompoundStmt
+  109             | ELSE IF '(' condition_list ')' CompoundStmt
+  110             | ELSE CompoundStmt
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33) 44
+'%' (37) 88
+'(' (40) 12 16 17 18 19 41 51 52 53 70 71 90 96 97 98 106 107 108 109
+')' (41) 12 16 17 18 19 41 51 52 53 70 71 90 96 97 98 106 107 108 109
+'*' (42) 86
+'+' (43) 83
+',' (44) 34 72 73
+'-' (45) 30 32 84 92 94 103 105
+'/' (47) 87
+';' (59) 10 11 12 13 14 18 19 63 64 65 66 67 68 70 71 106 107
+'<' (60) 58
+'=' (61) 10 11 12 13 48 68
+'>' (62) 57
+'{' (123) 37
+'}' (125) 38
+error (256) 9
+PRINT (258) 106 107
+IF (259) 108 109
+ELSE (260) 109 110
+FOR (261)
+WHILE (262) 41
+I_CONST (263) 29 30 91 92 102 103
+F_CONST (264) 31 32 93 94 104 105
+STRING (265) 23
+TRUE (266) 27 99
+FALSE (267) 28 101
+STRING_CONST (268) 13 73 75 107
+ID (269) 10 11 12 13 14 16 17 18 19 26 34 35 48 50 51 52 56 63 65 66
+    68 70 71 95 96 97 100 106
+NEWLINE (270) 6 9
+ADD_ASSIGN (271) 78
+SUB_ASSIGN (272) 79
+MUL_ASSIGN (273) 80
+DIV_ASSIGN (274) 81
+MOD_ASSIGN (275) 82
+AND_OP (276) 42
+OR_OP (277) 43
+GE_OP (278) 59
+LE_OP (279) 60
+EQ_OP (280) 62
+NE_OP (281) 61
+INC (282) 76
+DEC (283) 77
+VOID (284) 24
+INT (285) 20
+FLOAT (286) 21
+BOOL (287) 22
+RETURN (288) 64 65 66 67
+
+
+Nonterminals, with rules where they appear
+
+$accept (49)
+    on left: 0
+program (50)
+    on left: 1 2, on right: 0 1
+stat (51)
+    on left: 3 4 5 6 7 8 9, on right: 1 2 39
+declaration (52)
+    on left: 10 11 12 13 14 16 17 18 19, on right: 3
+$@1 (53)
+    on left: 15, on right: 16
+type (54)
+    on left: 20 21 22 23 24, on right: 10 11 12 13 14 16 17 18 19 34
+    35
+initializer (55)
+    on left: 25 26 27 28, on right: 10 47
+initializer_num (56)
+    on left: 29 30 31 32, on right: 25
+param_list (57)
+    on left: 33, on right: 16 19
+param (58)
+    on left: 34 35, on right: 33 34
+CompoundStmt (59)
+    on left: 36, on right: 16 17 41 108 109 110
+deeper_scope (60)
+    on left: 37, on right: 36
+shallow_scope (61)
+    on left: 38, on right: 36
+StmtList (62)
+    on left: 39 40, on right: 36 39
+WHILESTMT (63)
+    on left: 41, on right: 7
+condition_list (64)
+    on left: 42 43 44 45, on right: 41 42 43 44 53 72 74 108 109
+condition (65)
+    on left: 46 47 48 49 50 51 52 53, on right: 42 43 45
+condition_type (66)
+    on left: 54 55 56, on right: 46
+compare (67)
+    on left: 57 58 59 60 61 62, on right: 46
+expression_stat (68)
+    on left: 63 64 65 66 67 68 70 71, on right: 4
+$@2 (69)
+    on left: 69, on right: 70
+param_call (70)
+    on left: 72 73 74 75, on right: 12 51 70 72 73 96
+ArithmeticList (71)
+    on left: 76 77 78 79 80 81 82, on right: 50 56 63 66
+arithmetic_expr (72)
+    on left: 83 84 85, on right: 11 48 49 55 67 68 83 84 90
+term (73)
+    on left: 86 87 88 89 90, on right: 83 84 85 86 87 88 98
+fact (74)
+    on left: 91 92 93 94 95 96 97 98, on right: 54 78 79 80 81 82 86
+    87 88 89
+Factor (75)
+    on left: 99 100 101 102 103 104 105, on right: 64
+print_func (76)
+    on left: 106 107, on right: 5
+if_else_cond (77)
+    on left: 108 109 110, on right: 8
+
+
+State 0
+
+    0 $accept: . program $end
+
+    error    shift, and go to state 1
+    PRINT    shift, and go to state 2
+    IF       shift, and go to state 3
+    ELSE     shift, and go to state 4
+    WHILE    shift, and go to state 5
+    STRING   shift, and go to state 6
+    ID       shift, and go to state 7
+    NEWLINE  shift, and go to state 8
+    VOID     shift, and go to state 9
+    INT      shift, and go to state 10
+    FLOAT    shift, and go to state 11
+    BOOL     shift, and go to state 12
+    RETURN   shift, and go to state 13
+
+    program          go to state 14
+    stat             go to state 15
+    declaration      go to state 16
+    type             go to state 17
+    WHILESTMT        go to state 18
+    expression_stat  go to state 19
+    print_func       go to state 20
+    if_else_cond     go to state 21
+
+
+State 1
+
+    9 stat: error . NEWLINE
+
+    NEWLINE  shift, and go to state 22
+
+
+State 2
+
+  106 print_func: PRINT . '(' ID ')' ';'
+  107           | PRINT . '(' STRING_CONST ')' ';'
+
+    '('  shift, and go to state 23
+
+
+State 3
+
+  108 if_else_cond: IF . '(' condition_list ')' CompoundStmt
+
+    '('  shift, and go to state 24
+
+
+State 4
+
+  109 if_else_cond: ELSE . IF '(' condition_list ')' CompoundStmt
+  110             | ELSE . CompoundStmt
+
+    IF   shift, and go to state 25
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 27
+    deeper_scope  go to state 28
+
+
+State 5
+
+   41 WHILESTMT: WHILE . '(' condition_list ')' CompoundStmt
+
+    '('  shift, and go to state 29
+
+
+State 6
+
+   23 type: STRING .
+
+    $default  reduce using rule 23 (type)
+
+
+State 7
+
+   63 expression_stat: ID . ArithmeticList ';'
+   68                | ID . '=' arithmetic_expr ';'
+   70                | ID . '(' param_call ')' $@2 ';'
+   71                | ID . '(' ')' ';'
+
+    ADD_ASSIGN  shift, and go to state 30
+    SUB_ASSIGN  shift, and go to state 31
+    MUL_ASSIGN  shift, and go to state 32
+    DIV_ASSIGN  shift, and go to state 33
+    MOD_ASSIGN  shift, and go to state 34
+    INC         shift, and go to state 35
+    DEC         shift, and go to state 36
+    '='         shift, and go to state 37
+    '('         shift, and go to state 38
+
+    ArithmeticList  go to state 39
+
+
+State 8
+
+    6 stat: NEWLINE .
+
+    $default  reduce using rule 6 (stat)
+
+
+State 9
+
+   24 type: VOID .
+
+    $default  reduce using rule 24 (type)
+
+
+State 10
+
+   20 type: INT .
+
+    $default  reduce using rule 20 (type)
+
+
+State 11
+
+   21 type: FLOAT .
+
+    $default  reduce using rule 21 (type)
+
+
+State 12
+
+   22 type: BOOL .
+
+    $default  reduce using rule 22 (type)
+
+
+State 13
+
+   64 expression_stat: RETURN . Factor ';'
+   65                | RETURN . ID ';'
+   66                | RETURN . ID ArithmeticList ';'
+   67                | RETURN . arithmetic_expr ';'
+
+    I_CONST  shift, and go to state 40
+    F_CONST  shift, and go to state 41
+    TRUE     shift, and go to state 42
+    FALSE    shift, and go to state 43
+    ID       shift, and go to state 44
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 46
+
+    arithmetic_expr  go to state 47
+    term             go to state 48
+    fact             go to state 49
+    Factor           go to state 50
+
+
+State 14
+
+    0 $accept: program . $end
+    1 program: program . stat
+
+    $end     shift, and go to state 51
+    error    shift, and go to state 1
+    PRINT    shift, and go to state 2
+    IF       shift, and go to state 3
+    ELSE     shift, and go to state 4
+    WHILE    shift, and go to state 5
+    STRING   shift, and go to state 6
+    ID       shift, and go to state 7
+    NEWLINE  shift, and go to state 8
+    VOID     shift, and go to state 9
+    INT      shift, and go to state 10
+    FLOAT    shift, and go to state 11
+    BOOL     shift, and go to state 12
+    RETURN   shift, and go to state 13
+
+    stat             go to state 52
+    declaration      go to state 16
+    type             go to state 17
+    WHILESTMT        go to state 18
+    expression_stat  go to state 19
+    print_func       go to state 20
+    if_else_cond     go to state 21
+
+
+State 15
+
+    2 program: stat .
+
+    $default  reduce using rule 2 (program)
+
+
+State 16
+
+    3 stat: declaration .
+
+    $default  reduce using rule 3 (stat)
+
+
+State 17
+
+   10 declaration: type . ID '=' initializer ';'
+   11            | type . ID '=' arithmetic_expr ';'
+   12            | type . ID '=' ID '(' param_call ')' ';'
+   13            | type . ID '=' STRING_CONST ';'
+   14            | type . ID ';'
+   16            | type . ID '(' param_list ')' $@1 CompoundStmt
+   17            | type . ID '(' ')' CompoundStmt
+   18            | type . ID '(' ')' ';'
+   19            | type . ID '(' param_list ')' ';'
+
+    ID  shift, and go to state 53
+
+
+State 18
+
+    7 stat: WHILESTMT .
+
+    $default  reduce using rule 7 (stat)
+
+
+State 19
+
+    4 stat: expression_stat .
+
+    $default  reduce using rule 4 (stat)
+
+
+State 20
+
+    5 stat: print_func .
+
+    $default  reduce using rule 5 (stat)
+
+
+State 21
+
+    8 stat: if_else_cond .
+
+    $default  reduce using rule 8 (stat)
+
+
+State 22
+
+    9 stat: error NEWLINE .
+
+    $default  reduce using rule 9 (stat)
+
+
+State 23
+
+  106 print_func: PRINT '(' . ID ')' ';'
+  107           | PRINT '(' . STRING_CONST ')' ';'
+
+    STRING_CONST  shift, and go to state 54
+    ID            shift, and go to state 55
+
+
+State 24
+
+  108 if_else_cond: IF '(' . condition_list ')' CompoundStmt
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+    '!'      shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 66
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 25
+
+  109 if_else_cond: ELSE IF . '(' condition_list ')' CompoundStmt
+
+    '('  shift, and go to state 71
+
+
+State 26
+
+   37 deeper_scope: '{' .
+
+    $default  reduce using rule 37 (deeper_scope)
+
+
+State 27
+
+  110 if_else_cond: ELSE CompoundStmt .
+
+    $default  reduce using rule 110 (if_else_cond)
+
+
+State 28
+
+   36 CompoundStmt: deeper_scope . StmtList shallow_scope
+
+    $default  reduce using rule 40 (StmtList)
+
+    StmtList  go to state 72
+
+
+State 29
+
+   41 WHILESTMT: WHILE '(' . condition_list ')' CompoundStmt
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+    '!'      shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 73
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 30
+
+   78 ArithmeticList: ADD_ASSIGN . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 79
+
+
+State 31
+
+   79 ArithmeticList: SUB_ASSIGN . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 80
+
+
+State 32
+
+   80 ArithmeticList: MUL_ASSIGN . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 81
+
+
+State 33
+
+   81 ArithmeticList: DIV_ASSIGN . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 82
+
+
+State 34
+
+   82 ArithmeticList: MOD_ASSIGN . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 83
+
+
+State 35
+
+   76 ArithmeticList: INC .
+
+    $default  reduce using rule 76 (ArithmeticList)
+
+
+State 36
+
+   77 ArithmeticList: DEC .
+
+    $default  reduce using rule 77 (ArithmeticList)
+
+
+State 37
+
+   68 expression_stat: ID '=' . arithmetic_expr ';'
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    arithmetic_expr  go to state 84
+    term             go to state 48
+    fact             go to state 49
+
+
+State 38
+
+   70 expression_stat: ID '(' . param_call ')' $@2 ';'
+   71                | ID '(' . ')' ';'
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 85
+    ID            shift, and go to state 60
+    '('           shift, and go to state 61
+    ')'           shift, and go to state 86
+    '-'           shift, and go to state 62
+    '!'           shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 87
+    condition        go to state 67
+    condition_type   go to state 68
+    param_call       go to state 88
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 39
+
+   63 expression_stat: ID ArithmeticList . ';'
+
+    ';'  shift, and go to state 89
+
+
+State 40
+
+   91 fact: I_CONST .
+  102 Factor: I_CONST .
+
+    ';'       reduce using rule 91 (fact)
+    ';'       [reduce using rule 102 (Factor)]
+    $default  reduce using rule 91 (fact)
+
+
+State 41
+
+   93 fact: F_CONST .
+  104 Factor: F_CONST .
+
+    ';'       reduce using rule 93 (fact)
+    ';'       [reduce using rule 104 (Factor)]
+    $default  reduce using rule 93 (fact)
+
+
+State 42
+
+   99 Factor: TRUE .
+
+    $default  reduce using rule 99 (Factor)
+
+
+State 43
+
+  101 Factor: FALSE .
+
+    $default  reduce using rule 101 (Factor)
+
+
+State 44
+
+   65 expression_stat: RETURN ID . ';'
+   66                | RETURN ID . ArithmeticList ';'
+   95 fact: ID .
+   96     | ID . '(' param_call ')'
+   97     | ID . '(' ')'
+  100 Factor: ID .
+
+    ADD_ASSIGN  shift, and go to state 30
+    SUB_ASSIGN  shift, and go to state 31
+    MUL_ASSIGN  shift, and go to state 32
+    DIV_ASSIGN  shift, and go to state 33
+    MOD_ASSIGN  shift, and go to state 34
+    INC         shift, and go to state 35
+    DEC         shift, and go to state 36
+    ';'         shift, and go to state 90
+    '('         shift, and go to state 91
+
+    ';'       [reduce using rule 95 (fact)]
+    ';'       [reduce using rule 100 (Factor)]
+    $default  reduce using rule 95 (fact)
+
+    ArithmeticList  go to state 92
+
+
+State 45
+
+   90 term: '(' . arithmetic_expr ')'
+   98 fact: '(' . term ')'
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    arithmetic_expr  go to state 93
+    term             go to state 94
+    fact             go to state 49
+
+
+State 46
+
+   92 fact: '-' . I_CONST
+   94     | '-' . F_CONST
+  103 Factor: '-' . I_CONST
+  105       | '-' . F_CONST
+
+    I_CONST  shift, and go to state 95
+    F_CONST  shift, and go to state 96
+
+
+State 47
+
+   67 expression_stat: RETURN arithmetic_expr . ';'
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    ';'  shift, and go to state 97
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+
+State 48
+
+   85 arithmetic_expr: term .
+   86 term: term . '*' fact
+   87     | term . '/' fact
+   88     | term . '%' fact
+
+    '*'  shift, and go to state 100
+    '/'  shift, and go to state 101
+    '%'  shift, and go to state 102
+
+    $default  reduce using rule 85 (arithmetic_expr)
+
+
+State 49
+
+   89 term: fact .
+
+    $default  reduce using rule 89 (term)
+
+
+State 50
+
+   64 expression_stat: RETURN Factor . ';'
+
+    ';'  shift, and go to state 103
+
+
+State 51
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 52
+
+    1 program: program stat .
+
+    $default  reduce using rule 1 (program)
+
+
+State 53
+
+   10 declaration: type ID . '=' initializer ';'
+   11            | type ID . '=' arithmetic_expr ';'
+   12            | type ID . '=' ID '(' param_call ')' ';'
+   13            | type ID . '=' STRING_CONST ';'
+   14            | type ID . ';'
+   16            | type ID . '(' param_list ')' $@1 CompoundStmt
+   17            | type ID . '(' ')' CompoundStmt
+   18            | type ID . '(' ')' ';'
+   19            | type ID . '(' param_list ')' ';'
+
+    '='  shift, and go to state 104
+    ';'  shift, and go to state 105
+    '('  shift, and go to state 106
+
+
+State 54
+
+  107 print_func: PRINT '(' STRING_CONST . ')' ';'
+
+    ')'  shift, and go to state 107
+
+
+State 55
+
+  106 print_func: PRINT '(' ID . ')' ';'
+
+    ')'  shift, and go to state 108
+
+
+State 56
+
+   29 initializer_num: I_CONST .
+   91 fact: I_CONST .
+
+    AND_OP    reduce using rule 29 (initializer_num)
+    AND_OP    [reduce using rule 91 (fact)]
+    OR_OP     reduce using rule 29 (initializer_num)
+    OR_OP     [reduce using rule 91 (fact)]
+    ';'       reduce using rule 29 (initializer_num)
+    ';'       [reduce using rule 91 (fact)]
+    ')'       reduce using rule 29 (initializer_num)
+    ')'       [reduce using rule 91 (fact)]
+    ','       reduce using rule 29 (initializer_num)
+    ','       [reduce using rule 91 (fact)]
+    $default  reduce using rule 91 (fact)
+
+
+State 57
+
+   31 initializer_num: F_CONST .
+   93 fact: F_CONST .
+
+    AND_OP    reduce using rule 31 (initializer_num)
+    AND_OP    [reduce using rule 93 (fact)]
+    OR_OP     reduce using rule 31 (initializer_num)
+    OR_OP     [reduce using rule 93 (fact)]
+    ';'       reduce using rule 31 (initializer_num)
+    ';'       [reduce using rule 93 (fact)]
+    ')'       reduce using rule 31 (initializer_num)
+    ')'       [reduce using rule 93 (fact)]
+    ','       reduce using rule 31 (initializer_num)
+    ','       [reduce using rule 93 (fact)]
+    $default  reduce using rule 93 (fact)
+
+
+State 58
+
+   27 initializer: TRUE .
+
+    $default  reduce using rule 27 (initializer)
+
+
+State 59
+
+   28 initializer: FALSE .
+
+    $default  reduce using rule 28 (initializer)
+
+
+State 60
+
+   26 initializer: ID .
+   48 condition: ID . '=' arithmetic_expr
+   50          | ID . ArithmeticList
+   51          | ID . '(' param_call ')'
+   52          | ID . '(' ')'
+   56 condition_type: ID . ArithmeticList
+   95 fact: ID .
+   96     | ID . '(' param_call ')'
+   97     | ID . '(' ')'
+
+    ADD_ASSIGN  shift, and go to state 30
+    SUB_ASSIGN  shift, and go to state 31
+    MUL_ASSIGN  shift, and go to state 32
+    DIV_ASSIGN  shift, and go to state 33
+    MOD_ASSIGN  shift, and go to state 34
+    INC         shift, and go to state 35
+    DEC         shift, and go to state 36
+    '='         shift, and go to state 109
+    '('         shift, and go to state 110
+
+    AND_OP    reduce using rule 26 (initializer)
+    AND_OP    [reduce using rule 95 (fact)]
+    OR_OP     reduce using rule 26 (initializer)
+    OR_OP     [reduce using rule 95 (fact)]
+    ')'       reduce using rule 26 (initializer)
+    ')'       [reduce using rule 95 (fact)]
+    ','       reduce using rule 26 (initializer)
+    ','       [reduce using rule 95 (fact)]
+    $default  reduce using rule 95 (fact)
+
+    ArithmeticList  go to state 111
+
+
+State 61
+
+   53 condition: '(' . condition_list ')'
+   90 term: '(' . arithmetic_expr ')'
+   98 fact: '(' . term ')'
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+    '!'      shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 112
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 113
+    term             go to state 94
+    fact             go to state 70
+
+
+State 62
+
+   30 initializer_num: '-' . I_CONST
+   32                | '-' . F_CONST
+   92 fact: '-' . I_CONST
+   94     | '-' . F_CONST
+
+    I_CONST  shift, and go to state 114
+    F_CONST  shift, and go to state 115
+
+
+State 63
+
+   44 condition_list: '!' . condition_list
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+    '!'      shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 116
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 64
+
+   47 condition: initializer .
+
+    $default  reduce using rule 47 (condition)
+
+
+State 65
+
+   25 initializer: initializer_num .
+
+    $default  reduce using rule 25 (initializer)
+
+
+State 66
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+  108 if_else_cond: IF '(' condition_list . ')' CompoundStmt
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+    ')'     shift, and go to state 119
+
+
+State 67
+
+   45 condition_list: condition .
+
+    $default  reduce using rule 45 (condition_list)
+
+
+State 68
+
+   46 condition: condition_type . compare condition_type
+
+    GE_OP  shift, and go to state 120
+    LE_OP  shift, and go to state 121
+    EQ_OP  shift, and go to state 122
+    NE_OP  shift, and go to state 123
+    '>'    shift, and go to state 124
+    '<'    shift, and go to state 125
+
+    compare  go to state 126
+
+
+State 69
+
+   49 condition: arithmetic_expr .
+   55 condition_type: arithmetic_expr .
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+    AND_OP    reduce using rule 49 (condition)
+    OR_OP     reduce using rule 49 (condition)
+    ')'       reduce using rule 49 (condition)
+    ','       reduce using rule 49 (condition)
+    $default  reduce using rule 55 (condition_type)
+
+
+State 70
+
+   54 condition_type: fact .
+   89 term: fact .
+
+    AND_OP    reduce using rule 54 (condition_type)
+    AND_OP    [reduce using rule 89 (term)]
+    OR_OP     reduce using rule 54 (condition_type)
+    OR_OP     [reduce using rule 89 (term)]
+    GE_OP     reduce using rule 54 (condition_type)
+    GE_OP     [reduce using rule 89 (term)]
+    LE_OP     reduce using rule 54 (condition_type)
+    LE_OP     [reduce using rule 89 (term)]
+    EQ_OP     reduce using rule 54 (condition_type)
+    EQ_OP     [reduce using rule 89 (term)]
+    NE_OP     reduce using rule 54 (condition_type)
+    NE_OP     [reduce using rule 89 (term)]
+    ')'       reduce using rule 54 (condition_type)
+    ')'       [reduce using rule 89 (term)]
+    '-'       reduce using rule 89 (term)
+    ','       reduce using rule 54 (condition_type)
+    ','       [reduce using rule 89 (term)]
+    '>'       reduce using rule 54 (condition_type)
+    '>'       [reduce using rule 89 (term)]
+    '<'       reduce using rule 54 (condition_type)
+    '<'       [reduce using rule 89 (term)]
+    '+'       reduce using rule 89 (term)
+    '*'       reduce using rule 89 (term)
+    '/'       reduce using rule 89 (term)
+    '%'       reduce using rule 89 (term)
+    $default  reduce using rule 54 (condition_type)
+
+
+State 71
+
+  109 if_else_cond: ELSE IF '(' . condition_list ')' CompoundStmt
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+    '!'      shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 127
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 72
+
+   36 CompoundStmt: deeper_scope StmtList . shallow_scope
+   39 StmtList: StmtList . stat
+
+    error    shift, and go to state 1
+    PRINT    shift, and go to state 2
+    IF       shift, and go to state 3
+    ELSE     shift, and go to state 4
+    WHILE    shift, and go to state 5
+    STRING   shift, and go to state 6
+    ID       shift, and go to state 7
+    NEWLINE  shift, and go to state 8
+    VOID     shift, and go to state 9
+    INT      shift, and go to state 10
+    FLOAT    shift, and go to state 11
+    BOOL     shift, and go to state 12
+    RETURN   shift, and go to state 13
+    '}'      shift, and go to state 128
+
+    stat             go to state 129
+    declaration      go to state 16
+    type             go to state 17
+    shallow_scope    go to state 130
+    WHILESTMT        go to state 18
+    expression_stat  go to state 19
+    print_func       go to state 20
+    if_else_cond     go to state 21
+
+
+State 73
+
+   41 WHILESTMT: WHILE '(' condition_list . ')' CompoundStmt
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+    ')'     shift, and go to state 131
+
+
+State 74
+
+   91 fact: I_CONST .
+
+    $default  reduce using rule 91 (fact)
+
+
+State 75
+
+   93 fact: F_CONST .
+
+    $default  reduce using rule 93 (fact)
+
+
+State 76
+
+   95 fact: ID .
+   96     | ID . '(' param_call ')'
+   97     | ID . '(' ')'
+
+    '('  shift, and go to state 91
+
+    $default  reduce using rule 95 (fact)
+
+
+State 77
+
+   98 fact: '(' . term ')'
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    term  go to state 132
+    fact  go to state 49
+
+
+State 78
+
+   92 fact: '-' . I_CONST
+   94     | '-' . F_CONST
+
+    I_CONST  shift, and go to state 133
+    F_CONST  shift, and go to state 134
+
+
+State 79
+
+   78 ArithmeticList: ADD_ASSIGN fact .
+
+    $default  reduce using rule 78 (ArithmeticList)
+
+
+State 80
+
+   79 ArithmeticList: SUB_ASSIGN fact .
+
+    $default  reduce using rule 79 (ArithmeticList)
+
+
+State 81
+
+   80 ArithmeticList: MUL_ASSIGN fact .
+
+    $default  reduce using rule 80 (ArithmeticList)
+
+
+State 82
+
+   81 ArithmeticList: DIV_ASSIGN fact .
+
+    $default  reduce using rule 81 (ArithmeticList)
+
+
+State 83
+
+   82 ArithmeticList: MOD_ASSIGN fact .
+
+    $default  reduce using rule 82 (ArithmeticList)
+
+
+State 84
+
+   68 expression_stat: ID '=' arithmetic_expr . ';'
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    ';'  shift, and go to state 135
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+
+State 85
+
+   75 param_call: STRING_CONST .
+
+    $default  reduce using rule 75 (param_call)
+
+
+State 86
+
+   71 expression_stat: ID '(' ')' . ';'
+
+    ';'  shift, and go to state 136
+
+
+State 87
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+   74 param_call: condition_list .
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+
+    $default  reduce using rule 74 (param_call)
+
+
+State 88
+
+   70 expression_stat: ID '(' param_call . ')' $@2 ';'
+   72 param_call: param_call . ',' condition_list
+   73           | param_call . ',' STRING_CONST
+
+    ')'  shift, and go to state 137
+    ','  shift, and go to state 138
+
+
+State 89
+
+   63 expression_stat: ID ArithmeticList ';' .
+
+    $default  reduce using rule 63 (expression_stat)
+
+
+State 90
+
+   65 expression_stat: RETURN ID ';' .
+
+    $default  reduce using rule 65 (expression_stat)
+
+
+State 91
+
+   96 fact: ID '(' . param_call ')'
+   97     | ID '(' . ')'
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 85
+    ID            shift, and go to state 60
+    '('           shift, and go to state 61
+    ')'           shift, and go to state 139
+    '-'           shift, and go to state 62
+    '!'           shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 87
+    condition        go to state 67
+    condition_type   go to state 68
+    param_call       go to state 140
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 92
+
+   66 expression_stat: RETURN ID ArithmeticList . ';'
+
+    ';'  shift, and go to state 141
+
+
+State 93
+
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+   90 term: '(' arithmetic_expr . ')'
+
+    ')'  shift, and go to state 142
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+
+State 94
+
+   85 arithmetic_expr: term .
+   86 term: term . '*' fact
+   87     | term . '/' fact
+   88     | term . '%' fact
+   98 fact: '(' term . ')'
+
+    ')'  shift, and go to state 143
+    '*'  shift, and go to state 100
+    '/'  shift, and go to state 101
+    '%'  shift, and go to state 102
+
+    ')'       [reduce using rule 85 (arithmetic_expr)]
+    $default  reduce using rule 85 (arithmetic_expr)
+
+
+State 95
+
+   92 fact: '-' I_CONST .
+  103 Factor: '-' I_CONST .
+
+    ';'       reduce using rule 92 (fact)
+    ';'       [reduce using rule 103 (Factor)]
+    $default  reduce using rule 92 (fact)
+
+
+State 96
+
+   94 fact: '-' F_CONST .
+  105 Factor: '-' F_CONST .
+
+    ';'       reduce using rule 94 (fact)
+    ';'       [reduce using rule 105 (Factor)]
+    $default  reduce using rule 94 (fact)
+
+
+State 97
+
+   67 expression_stat: RETURN arithmetic_expr ';' .
+
+    $default  reduce using rule 67 (expression_stat)
+
+
+State 98
+
+   84 arithmetic_expr: arithmetic_expr '-' . term
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    term  go to state 144
+    fact  go to state 49
+
+
+State 99
+
+   83 arithmetic_expr: arithmetic_expr '+' . term
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    term  go to state 145
+    fact  go to state 49
+
+
+State 100
+
+   86 term: term '*' . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 146
+
+
+State 101
+
+   87 term: term '/' . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 147
+
+
+State 102
+
+   88 term: term '%' . fact
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 77
+    '-'      shift, and go to state 78
+
+    fact  go to state 148
+
+
+State 103
+
+   64 expression_stat: RETURN Factor ';' .
+
+    $default  reduce using rule 64 (expression_stat)
+
+
+State 104
+
+   10 declaration: type ID '=' . initializer ';'
+   11            | type ID '=' . arithmetic_expr ';'
+   12            | type ID '=' . ID '(' param_call ')' ';'
+   13            | type ID '=' . STRING_CONST ';'
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 149
+    ID            shift, and go to state 150
+    '('           shift, and go to state 45
+    '-'           shift, and go to state 62
+
+    initializer      go to state 151
+    initializer_num  go to state 65
+    arithmetic_expr  go to state 152
+    term             go to state 48
+    fact             go to state 49
+
+
+State 105
+
+   14 declaration: type ID ';' .
+
+    $default  reduce using rule 14 (declaration)
+
+
+State 106
+
+   16 declaration: type ID '(' . param_list ')' $@1 CompoundStmt
+   17            | type ID '(' . ')' CompoundStmt
+   18            | type ID '(' . ')' ';'
+   19            | type ID '(' . param_list ')' ';'
+
+    STRING  shift, and go to state 6
+    VOID    shift, and go to state 9
+    INT     shift, and go to state 10
+    FLOAT   shift, and go to state 11
+    BOOL    shift, and go to state 12
+    ')'     shift, and go to state 153
+
+    type        go to state 154
+    param_list  go to state 155
+    param       go to state 156
+
+
+State 107
+
+  107 print_func: PRINT '(' STRING_CONST ')' . ';'
+
+    ';'  shift, and go to state 157
+
+
+State 108
+
+  106 print_func: PRINT '(' ID ')' . ';'
+
+    ';'  shift, and go to state 158
+
+
+State 109
+
+   48 condition: ID '=' . arithmetic_expr
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 76
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    arithmetic_expr  go to state 159
+    term             go to state 48
+    fact             go to state 49
+
+
+State 110
+
+   51 condition: ID '(' . param_call ')'
+   52          | ID '(' . ')'
+   96 fact: ID '(' . param_call ')'
+   97     | ID '(' . ')'
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 85
+    ID            shift, and go to state 60
+    '('           shift, and go to state 61
+    ')'           shift, and go to state 160
+    '-'           shift, and go to state 62
+    '!'           shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 87
+    condition        go to state 67
+    condition_type   go to state 68
+    param_call       go to state 161
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 111
+
+   50 condition: ID ArithmeticList .
+   56 condition_type: ID ArithmeticList .
+
+    AND_OP    reduce using rule 50 (condition)
+    OR_OP     reduce using rule 50 (condition)
+    ')'       reduce using rule 50 (condition)
+    ','       reduce using rule 50 (condition)
+    $default  reduce using rule 56 (condition_type)
+
+
+State 112
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+   53 condition: '(' condition_list . ')'
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+    ')'     shift, and go to state 162
+
+
+State 113
+
+   49 condition: arithmetic_expr .
+   55 condition_type: arithmetic_expr .
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+   90 term: '(' arithmetic_expr . ')'
+
+    ')'  shift, and go to state 142
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+    AND_OP    reduce using rule 49 (condition)
+    OR_OP     reduce using rule 49 (condition)
+    ')'       [reduce using rule 49 (condition)]
+    $default  reduce using rule 55 (condition_type)
+
+
+State 114
+
+   30 initializer_num: '-' I_CONST .
+   92 fact: '-' I_CONST .
+
+    AND_OP    reduce using rule 30 (initializer_num)
+    AND_OP    [reduce using rule 92 (fact)]
+    OR_OP     reduce using rule 30 (initializer_num)
+    OR_OP     [reduce using rule 92 (fact)]
+    ';'       reduce using rule 30 (initializer_num)
+    ';'       [reduce using rule 92 (fact)]
+    ')'       reduce using rule 30 (initializer_num)
+    ')'       [reduce using rule 92 (fact)]
+    ','       reduce using rule 30 (initializer_num)
+    ','       [reduce using rule 92 (fact)]
+    $default  reduce using rule 92 (fact)
+
+
+State 115
+
+   32 initializer_num: '-' F_CONST .
+   94 fact: '-' F_CONST .
+
+    AND_OP    reduce using rule 32 (initializer_num)
+    AND_OP    [reduce using rule 94 (fact)]
+    OR_OP     reduce using rule 32 (initializer_num)
+    OR_OP     [reduce using rule 94 (fact)]
+    ';'       reduce using rule 32 (initializer_num)
+    ';'       [reduce using rule 94 (fact)]
+    ')'       reduce using rule 32 (initializer_num)
+    ')'       [reduce using rule 94 (fact)]
+    ','       reduce using rule 32 (initializer_num)
+    ','       [reduce using rule 94 (fact)]
+    $default  reduce using rule 94 (fact)
+
+
+State 116
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+   44               | '!' condition_list .
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+
+    AND_OP    [reduce using rule 44 (condition_list)]
+    OR_OP     [reduce using rule 44 (condition_list)]
+    $default  reduce using rule 44 (condition_list)
+
+
+State 117
+
+   42 condition_list: condition_list AND_OP . condition
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition        go to state 163
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 118
+
+   43 condition_list: condition_list OR_OP . condition
+
+    I_CONST  shift, and go to state 56
+    F_CONST  shift, and go to state 57
+    TRUE     shift, and go to state 58
+    FALSE    shift, and go to state 59
+    ID       shift, and go to state 60
+    '('      shift, and go to state 61
+    '-'      shift, and go to state 62
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition        go to state 164
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 119
+
+  108 if_else_cond: IF '(' condition_list ')' . CompoundStmt
+
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 165
+    deeper_scope  go to state 28
+
+
+State 120
+
+   59 compare: GE_OP .
+
+    $default  reduce using rule 59 (compare)
+
+
+State 121
+
+   60 compare: LE_OP .
+
+    $default  reduce using rule 60 (compare)
+
+
+State 122
+
+   62 compare: EQ_OP .
+
+    $default  reduce using rule 62 (compare)
+
+
+State 123
+
+   61 compare: NE_OP .
+
+    $default  reduce using rule 61 (compare)
+
+
+State 124
+
+   57 compare: '>' .
+
+    $default  reduce using rule 57 (compare)
+
+
+State 125
+
+   58 compare: '<' .
+
+    $default  reduce using rule 58 (compare)
+
+
+State 126
+
+   46 condition: condition_type compare . condition_type
+
+    I_CONST  shift, and go to state 74
+    F_CONST  shift, and go to state 75
+    ID       shift, and go to state 166
+    '('      shift, and go to state 45
+    '-'      shift, and go to state 78
+
+    condition_type   go to state 167
+    arithmetic_expr  go to state 168
+    term             go to state 48
+    fact             go to state 70
+
+
+State 127
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+  109 if_else_cond: ELSE IF '(' condition_list . ')' CompoundStmt
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+    ')'     shift, and go to state 169
+
+
+State 128
+
+   38 shallow_scope: '}' .
+
+    $default  reduce using rule 38 (shallow_scope)
+
+
+State 129
+
+   39 StmtList: StmtList stat .
+
+    $default  reduce using rule 39 (StmtList)
+
+
+State 130
+
+   36 CompoundStmt: deeper_scope StmtList shallow_scope .
+
+    $default  reduce using rule 36 (CompoundStmt)
+
+
+State 131
+
+   41 WHILESTMT: WHILE '(' condition_list ')' . CompoundStmt
+
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 170
+    deeper_scope  go to state 28
+
+
+State 132
+
+   86 term: term . '*' fact
+   87     | term . '/' fact
+   88     | term . '%' fact
+   98 fact: '(' term . ')'
+
+    ')'  shift, and go to state 143
+    '*'  shift, and go to state 100
+    '/'  shift, and go to state 101
+    '%'  shift, and go to state 102
+
+
+State 133
+
+   92 fact: '-' I_CONST .
+
+    $default  reduce using rule 92 (fact)
+
+
+State 134
+
+   94 fact: '-' F_CONST .
+
+    $default  reduce using rule 94 (fact)
+
+
+State 135
+
+   68 expression_stat: ID '=' arithmetic_expr ';' .
+
+    $default  reduce using rule 68 (expression_stat)
+
+
+State 136
+
+   71 expression_stat: ID '(' ')' ';' .
+
+    $default  reduce using rule 71 (expression_stat)
+
+
+State 137
+
+   70 expression_stat: ID '(' param_call ')' . $@2 ';'
+
+    $default  reduce using rule 69 ($@2)
+
+    $@2  go to state 171
+
+
+State 138
+
+   72 param_call: param_call ',' . condition_list
+   73           | param_call ',' . STRING_CONST
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 172
+    ID            shift, and go to state 60
+    '('           shift, and go to state 61
+    '-'           shift, and go to state 62
+    '!'           shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 173
+    condition        go to state 67
+    condition_type   go to state 68
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 139
+
+   97 fact: ID '(' ')' .
+
+    $default  reduce using rule 97 (fact)
+
+
+State 140
+
+   72 param_call: param_call . ',' condition_list
+   73           | param_call . ',' STRING_CONST
+   96 fact: ID '(' param_call . ')'
+
+    ')'  shift, and go to state 174
+    ','  shift, and go to state 138
+
+
+State 141
+
+   66 expression_stat: RETURN ID ArithmeticList ';' .
+
+    $default  reduce using rule 66 (expression_stat)
+
+
+State 142
+
+   90 term: '(' arithmetic_expr ')' .
+
+    $default  reduce using rule 90 (term)
+
+
+State 143
+
+   98 fact: '(' term ')' .
+
+    $default  reduce using rule 98 (fact)
+
+
+State 144
+
+   84 arithmetic_expr: arithmetic_expr '-' term .
+   86 term: term . '*' fact
+   87     | term . '/' fact
+   88     | term . '%' fact
+
+    '*'  shift, and go to state 100
+    '/'  shift, and go to state 101
+    '%'  shift, and go to state 102
+
+    $default  reduce using rule 84 (arithmetic_expr)
+
+
+State 145
+
+   83 arithmetic_expr: arithmetic_expr '+' term .
+   86 term: term . '*' fact
+   87     | term . '/' fact
+   88     | term . '%' fact
+
+    '*'  shift, and go to state 100
+    '/'  shift, and go to state 101
+    '%'  shift, and go to state 102
+
+    $default  reduce using rule 83 (arithmetic_expr)
+
+
+State 146
+
+   86 term: term '*' fact .
+
+    $default  reduce using rule 86 (term)
+
+
+State 147
+
+   87 term: term '/' fact .
+
+    $default  reduce using rule 87 (term)
+
+
+State 148
+
+   88 term: term '%' fact .
+
+    $default  reduce using rule 88 (term)
+
+
+State 149
+
+   13 declaration: type ID '=' STRING_CONST . ';'
+
+    ';'  shift, and go to state 175
+
+
+State 150
+
+   12 declaration: type ID '=' ID . '(' param_call ')' ';'
+   26 initializer: ID .
+   95 fact: ID .
+   96     | ID . '(' param_call ')'
+   97     | ID . '(' ')'
+
+    '('  shift, and go to state 176
+
+    ';'       reduce using rule 26 (initializer)
+    ';'       [reduce using rule 95 (fact)]
+    $default  reduce using rule 95 (fact)
+
+
+State 151
+
+   10 declaration: type ID '=' initializer . ';'
+
+    ';'  shift, and go to state 177
+
+
+State 152
+
+   11 declaration: type ID '=' arithmetic_expr . ';'
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    ';'  shift, and go to state 178
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+
+State 153
+
+   17 declaration: type ID '(' ')' . CompoundStmt
+   18            | type ID '(' ')' . ';'
+
+    ';'  shift, and go to state 179
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 180
+    deeper_scope  go to state 28
+
+
+State 154
+
+   35 param: type . ID
+
+    ID  shift, and go to state 181
+
+
+State 155
+
+   16 declaration: type ID '(' param_list . ')' $@1 CompoundStmt
+   19            | type ID '(' param_list . ')' ';'
+
+    ')'  shift, and go to state 182
+
+
+State 156
+
+   33 param_list: param .
+   34 param: param . ',' type ID
+
+    ','  shift, and go to state 183
+
+    $default  reduce using rule 33 (param_list)
+
+
+State 157
+
+  107 print_func: PRINT '(' STRING_CONST ')' ';' .
+
+    $default  reduce using rule 107 (print_func)
+
+
+State 158
+
+  106 print_func: PRINT '(' ID ')' ';' .
+
+    $default  reduce using rule 106 (print_func)
+
+
+State 159
+
+   48 condition: ID '=' arithmetic_expr .
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+    $default  reduce using rule 48 (condition)
+
+
+State 160
+
+   52 condition: ID '(' ')' .
+   97 fact: ID '(' ')' .
+
+    AND_OP    reduce using rule 52 (condition)
+    AND_OP    [reduce using rule 97 (fact)]
+    OR_OP     reduce using rule 52 (condition)
+    OR_OP     [reduce using rule 97 (fact)]
+    ')'       reduce using rule 52 (condition)
+    ')'       [reduce using rule 97 (fact)]
+    ','       reduce using rule 52 (condition)
+    ','       [reduce using rule 97 (fact)]
+    $default  reduce using rule 97 (fact)
+
+
+State 161
+
+   51 condition: ID '(' param_call . ')'
+   72 param_call: param_call . ',' condition_list
+   73           | param_call . ',' STRING_CONST
+   96 fact: ID '(' param_call . ')'
+
+    ')'  shift, and go to state 184
+    ','  shift, and go to state 138
+
+
+State 162
+
+   53 condition: '(' condition_list ')' .
+
+    $default  reduce using rule 53 (condition)
+
+
+State 163
+
+   42 condition_list: condition_list AND_OP condition .
+
+    $default  reduce using rule 42 (condition_list)
+
+
+State 164
+
+   43 condition_list: condition_list OR_OP condition .
+
+    $default  reduce using rule 43 (condition_list)
+
+
+State 165
+
+  108 if_else_cond: IF '(' condition_list ')' CompoundStmt .
+
+    $default  reduce using rule 108 (if_else_cond)
+
+
+State 166
+
+   56 condition_type: ID . ArithmeticList
+   95 fact: ID .
+   96     | ID . '(' param_call ')'
+   97     | ID . '(' ')'
+
+    ADD_ASSIGN  shift, and go to state 30
+    SUB_ASSIGN  shift, and go to state 31
+    MUL_ASSIGN  shift, and go to state 32
+    DIV_ASSIGN  shift, and go to state 33
+    MOD_ASSIGN  shift, and go to state 34
+    INC         shift, and go to state 35
+    DEC         shift, and go to state 36
+    '('         shift, and go to state 91
+
+    $default  reduce using rule 95 (fact)
+
+    ArithmeticList  go to state 185
+
+
+State 167
+
+   46 condition: condition_type compare condition_type .
+
+    $default  reduce using rule 46 (condition)
+
+
+State 168
+
+   55 condition_type: arithmetic_expr .
+   83 arithmetic_expr: arithmetic_expr . '+' term
+   84                | arithmetic_expr . '-' term
+
+    '-'  shift, and go to state 98
+    '+'  shift, and go to state 99
+
+    $default  reduce using rule 55 (condition_type)
+
+
+State 169
+
+  109 if_else_cond: ELSE IF '(' condition_list ')' . CompoundStmt
+
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 186
+    deeper_scope  go to state 28
+
+
+State 170
+
+   41 WHILESTMT: WHILE '(' condition_list ')' CompoundStmt .
+
+    $default  reduce using rule 41 (WHILESTMT)
+
+
+State 171
+
+   70 expression_stat: ID '(' param_call ')' $@2 . ';'
+
+    ';'  shift, and go to state 187
+
+
+State 172
+
+   73 param_call: param_call ',' STRING_CONST .
+
+    $default  reduce using rule 73 (param_call)
+
+
+State 173
+
+   42 condition_list: condition_list . AND_OP condition
+   43               | condition_list . OR_OP condition
+   72 param_call: param_call ',' condition_list .
+
+    AND_OP  shift, and go to state 117
+    OR_OP   shift, and go to state 118
+
+    $default  reduce using rule 72 (param_call)
+
+
+State 174
+
+   96 fact: ID '(' param_call ')' .
+
+    $default  reduce using rule 96 (fact)
+
+
+State 175
+
+   13 declaration: type ID '=' STRING_CONST ';' .
+
+    $default  reduce using rule 13 (declaration)
+
+
+State 176
+
+   12 declaration: type ID '=' ID '(' . param_call ')' ';'
+   96 fact: ID '(' . param_call ')'
+   97     | ID '(' . ')'
+
+    I_CONST       shift, and go to state 56
+    F_CONST       shift, and go to state 57
+    TRUE          shift, and go to state 58
+    FALSE         shift, and go to state 59
+    STRING_CONST  shift, and go to state 85
+    ID            shift, and go to state 60
+    '('           shift, and go to state 61
+    ')'           shift, and go to state 139
+    '-'           shift, and go to state 62
+    '!'           shift, and go to state 63
+
+    initializer      go to state 64
+    initializer_num  go to state 65
+    condition_list   go to state 87
+    condition        go to state 67
+    condition_type   go to state 68
+    param_call       go to state 188
+    arithmetic_expr  go to state 69
+    term             go to state 48
+    fact             go to state 70
+
+
+State 177
+
+   10 declaration: type ID '=' initializer ';' .
+
+    $default  reduce using rule 10 (declaration)
+
+
+State 178
+
+   11 declaration: type ID '=' arithmetic_expr ';' .
+
+    $default  reduce using rule 11 (declaration)
+
+
+State 179
+
+   18 declaration: type ID '(' ')' ';' .
+
+    $default  reduce using rule 18 (declaration)
+
+
+State 180
+
+   17 declaration: type ID '(' ')' CompoundStmt .
+
+    $default  reduce using rule 17 (declaration)
+
+
+State 181
+
+   35 param: type ID .
+
+    $default  reduce using rule 35 (param)
+
+
+State 182
+
+   16 declaration: type ID '(' param_list ')' . $@1 CompoundStmt
+   19            | type ID '(' param_list ')' . ';'
+
+    ';'  shift, and go to state 189
+
+    $default  reduce using rule 15 ($@1)
+
+    $@1  go to state 190
+
+
+State 183
+
+   34 param: param ',' . type ID
+
+    STRING  shift, and go to state 6
+    VOID    shift, and go to state 9
+    INT     shift, and go to state 10
+    FLOAT   shift, and go to state 11
+    BOOL    shift, and go to state 12
+
+    type  go to state 191
+
+
+State 184
+
+   51 condition: ID '(' param_call ')' .
+   96 fact: ID '(' param_call ')' .
+
+    AND_OP    reduce using rule 51 (condition)
+    AND_OP    [reduce using rule 96 (fact)]
+    OR_OP     reduce using rule 51 (condition)
+    OR_OP     [reduce using rule 96 (fact)]
+    ')'       reduce using rule 51 (condition)
+    ')'       [reduce using rule 96 (fact)]
+    ','       reduce using rule 51 (condition)
+    ','       [reduce using rule 96 (fact)]
+    $default  reduce using rule 96 (fact)
+
+
+State 185
+
+   56 condition_type: ID ArithmeticList .
+
+    $default  reduce using rule 56 (condition_type)
+
+
+State 186
+
+  109 if_else_cond: ELSE IF '(' condition_list ')' CompoundStmt .
+
+    $default  reduce using rule 109 (if_else_cond)
+
+
+State 187
+
+   70 expression_stat: ID '(' param_call ')' $@2 ';' .
+
+    $default  reduce using rule 70 (expression_stat)
+
+
+State 188
+
+   12 declaration: type ID '=' ID '(' param_call . ')' ';'
+   72 param_call: param_call . ',' condition_list
+   73           | param_call . ',' STRING_CONST
+   96 fact: ID '(' param_call . ')'
+
+    ')'  shift, and go to state 192
+    ','  shift, and go to state 138
+
+
+State 189
+
+   19 declaration: type ID '(' param_list ')' ';' .
+
+    $default  reduce using rule 19 (declaration)
+
+
+State 190
+
+   16 declaration: type ID '(' param_list ')' $@1 . CompoundStmt
+
+    '{'  shift, and go to state 26
+
+    CompoundStmt  go to state 193
+    deeper_scope  go to state 28
+
+
+State 191
+
+   34 param: param ',' type . ID
+
+    ID  shift, and go to state 194
+
+
+State 192
+
+   12 declaration: type ID '=' ID '(' param_call ')' . ';'
+   96 fact: ID '(' param_call ')' .
+
+    ';'  shift, and go to state 195
+
+    ';'       [reduce using rule 96 (fact)]
+    $default  reduce using rule 96 (fact)
+
+
+State 193
+
+   16 declaration: type ID '(' param_list ')' $@1 CompoundStmt .
+
+    $default  reduce using rule 16 (declaration)
+
+
+State 194
+
+   34 param: param ',' type ID .
+
+    $default  reduce using rule 34 (param)
+
+
+State 195
+
+   12 declaration: type ID '=' ID '(' param_call ')' ';' .
+
+    $default  reduce using rule 12 (declaration)
