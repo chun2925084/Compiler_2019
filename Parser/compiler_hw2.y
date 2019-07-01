@@ -693,12 +693,16 @@ int main(int argc, char** argv)
 	yylineno = 0;
 	//printf("%d: ", yylineno);
 	yyparse();
-	Entry *temp = cur_table->root;
-	num = 0;
-	flag = 0;
-	do_depth = 0;
+	if(cur_table){
+		Entry *temp = cur_table->root;
+		num = 0;
+		flag = 0;
+		do_depth = 0;
+	}
 	if(ERROR==0){
-		dump_symbol();
+		if(cur_table){
+			dump_symbol();
+		}
 		printf("\nTotal lines: %d \n",yylineno);
 	}
 	return 0;
